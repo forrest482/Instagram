@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'activities.apps.ActivitiesConfig',
     'direct.apps.DirectConfig',
     'logs.apps.LogsConfig',
-    'users.apps.usersConfig',
+    'users.apps.UsersConfig',
 
     # Third-party Apps:
 ]
