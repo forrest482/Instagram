@@ -59,4 +59,4 @@ class Media(models.Model):
         ('image', 'Image'), ('video', 'Video')))
 
     def __str__(self):
-        return f"{self.post.title} - {self.media_type}"
+        return f"{self.media_type}"
