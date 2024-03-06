@@ -17,14 +17,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'], url_path='following', permission_classes=[IsAuthenticated])
     def posts_from_following(self, request):
-        # Get the list of user IDs that the current user is following
         following_user_ids = Follow.objects.filter(
             follower=request.user).values_list('followed_id', flat=True)
-
-        # Get posts from those users
-        posts = Post.objects.filter(
-            user_id__in=following_user_ids).order_by('-created_at')
-
+        posts = Post.objects.filter(user_id__in=following_user_ids).order_by('-created_at').prefetch_related(
+            'comments',
+            'likes'
+        )
         serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 

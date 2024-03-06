@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Post, Story, Tag, Media, Mention
 from django.contrib.auth import get_user_model
+from activities.models import Comment, Like
 
 User = get_user_model()
 
@@ -42,16 +43,33 @@ class MentionSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'timestamp']
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'user', 'content', 'created_at']
+
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id', 'user']
+
+
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     tags = TagSerializer(many=True, required=False)
     media = MediaSerializer(many=True, required=False)
     mentions = MentionSerializer(many=True, required=False)
+    comments = CommentSerializer(
+        many=True, read_only=True)
+    likes = LikeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = ['id', 'caption', 'user',
-                  'created_at', 'tags', 'media', 'mentions']
+        fields = ['id', 'caption', 'user', 'created_at',
+                  'tags', 'media', 'mentions', 'comments', 'likes']
 
     def create(self, validated_data):
         # Remove 'user' from validated_data if it exists
